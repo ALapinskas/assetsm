@@ -22,18 +22,14 @@ assets.preload().then(() => {
 
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
-
     //draw image
     ctx.drawImage(imageBitmap,0,0, imageBitmap.width, imageBitmap.height)
-
     //draw tilesets:
     tilesetImages.forEach((image, idx) => {
         const m = idx + 1;
         ctx.drawImage(image,m*100,m* 100, image.width, image.height)
     })
 
-    document.body.appendChild(canvas)
-
-    
+    document.body.appendChild(canvas) 
 })
 

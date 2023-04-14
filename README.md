@@ -8,7 +8,7 @@ npm i assets-manager
 ```
 2. Import and create a class instance
 ```
-    import { AssetsManager } from "assets-manager"
+    import { AssetsManager } from "assetsm"
 
     const assets = new AssetsManager()
 ```
@@ -39,3 +39,4 @@ npm start
 
 * Images are loaded as ImageBitmaps
 * When loading tilemaps, it also process tileset files and loads images inside them, attached images could be retrieved by tileset.name key
+* ES6 only
