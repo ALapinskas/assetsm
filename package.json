@@ -2,7 +2,7 @@
   "name": "assetsm",
   "version": "0.0.2",
   "description": "Tilemaps, tilesets, images and audio loading and managing.",
-  "main": "dist/assetsm.js",
+  "main": "dist/assetsm.min.js",
   "directories": {
     "example": "examples"
   },
