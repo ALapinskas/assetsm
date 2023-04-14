@@ -3,27 +3,26 @@ Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
 
 # How to use
 
-// 1. Create a class instance
+1. Create a class instance
 
 const assets = new AssetsManager()
 
-// 2. Register files
+2. Register files
 
 assets.addAudio(key, url)
 assets.addImage(key, url)
 assets.addTileMap(key, url)
 
-// 3. Preload all files you registered in the previous step
+3. Preload all files you registered in the previous step
 
 assets.preload().then(() => {
 
-// 4. Use files
+4. Use files
 {
     assets.getAudio(key)
     assets.getImage(key)
     assets.getTileMap(key)
 }
-// check ./examples/index.js for more detailed example
 
 # Run examples from ./examples folder
 
