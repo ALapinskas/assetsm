@@ -2,29 +2,32 @@
 Assets manager. Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
 
 # How to use
-
-1. Import and create a class instance
+1. Install module
 ```
-    import { AssetsManager } from "dist/assetsm.js"
+npm i assetsm
+```
+2. Import and create a class instance
+```
+    import { AssetsManager } from "assetsm"
 
     const assets = new AssetsManager()
 ```
-2. Register files
+3. Register files
 ```
     assets.addAudio(key, url)
     assets.addImage(key, url)
     assets.addTileMap(key, url)
 ```
-3. Preload all files you registered in the previous step
+4. Preload all files you registered in the previous step
 ```
     assets.preload().then(() => {
 ```
-4. Use files
+5. Use files
 ```
     {
-        assets.getAudio(key)
-        assets.getImage(key)
-        assets.getTileMap(key)
+        const audio = assets.getAudio(key)
+        const image = assets.getImage(key)
+        const tilemap = assets.getTileMap(key)
     }
 ```
 # Run examples from ./examples folder
