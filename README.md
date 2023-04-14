@@ -11,8 +11,8 @@ Assets manager. Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading 
 ```
 2. Register files
 ```
-    assets.addAudio(key, url) \
-    assets.addImage(key, url) \
+    assets.addAudio(key, url)
+    assets.addImage(key, url)
     assets.addTileMap(key, url)
 ```
 3. Preload all files you registered in the previous step
@@ -21,17 +21,17 @@ Assets manager. Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading 
 ```
 4. Use files
 ```
-    { \
-        assets.getAudio(key) \
-        assets.getImage(key) \
-        assets.getTileMap(key) \
+    {
+        assets.getAudio(key)
+        assets.getImage(key)
+        assets.getTileMap(key)
     }
 ```
 # Run examples from ./examples folder
-
-1. npm i --save-dev
-2. npm start
-
+```
+npm i --save-dev
+npm start
+```
 # Other Notes
 
 * Images are loaded as ImageBitmaps
