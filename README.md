@@ -3,7 +3,9 @@ Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
 
 # How to use
 
-1. Create a class instance
+1. Import and create a class instance
+
+import { AssetsManager } from "dist/assetsm.js"
 
 const assets = new AssetsManager()
 

@@ -1,13 +1,14 @@
 {
   "name": "assetsm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tilemaps, tilesets, images and audio loading and managing.",
-  "main": "AssetsManager.js",
+  "main": "dist/assetsm.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "start": "npx http-server -c-1 -o ./examples"
+    "start": "npx http-server -c-1 -o ./examples",
+    "minify": "npx minify ./src/AssetsManager.js > ./dist/assetsm.min.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
   },
   "homepage": "https://github.com/ALapinskas/assetsm#readme",
   "devDependencies": {
-    "http-server": "14.1.1"
+    "http-server": "14.1.1",
+    "minify": "9.2.0"
   }
 }

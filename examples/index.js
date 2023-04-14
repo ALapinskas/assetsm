@@ -1,4 +1,4 @@
-import { AssetsManager } from "../AssetsManager.js"
+import { AssetsManager } from "../dist/assetsm.min.js"
 
 // 1. Create a class instance
 const assets = new AssetsManager()
