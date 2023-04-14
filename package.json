@@ -1,0 +1,36 @@
+{
+  "name": "assets-manager",
+  "version": "0.0.1",
+  "description": "Tilemaps, tilesets, images and audio loading and managing.",
+  "main": "AssetsManager.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "start": "npx http-server -c-1 -o ./examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ALapinskas/assets-manager.git"
+  },
+  "keywords": [
+    "tilemap",
+    "tileset",
+    "tiled",
+    "image",
+    "audio",
+    "loader",
+    "manager",
+    ".tmj",
+    ".tsj"
+  ],
+  "author": "Arturas-Alfredas Lapinskas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ALapinskas/assets-manager/issues"
+  },
+  "homepage": "https://github.com/ALapinskas/assets-manager#readme",
+  "devDependencies": {
+    "http-server": "14.1.1"
+  }
+}
