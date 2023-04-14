@@ -1,5 +1,5 @@
 {
-  "name": "assets-manager",
+  "name": "assetsm",
   "version": "0.0.1",
   "description": "Tilemaps, tilesets, images and audio loading and managing.",
   "main": "AssetsManager.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ALapinskas/assets-manager.git"
+    "url": "git+https://github.com/ALapinskas/assetsm.git"
   },
   "keywords": [
     "tilemap",
@@ -27,9 +27,9 @@
   "author": "Arturas-Alfredas Lapinskas",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ALapinskas/assets-manager/issues"
+    "url": "https://github.com/ALapinskas/assetsm/issues"
   },
-  "homepage": "https://github.com/ALapinskas/assets-manager#readme",
+  "homepage": "https://github.com/ALapinskas/assetsm#readme",
   "devDependencies": {
     "http-server": "14.1.1"
   }
