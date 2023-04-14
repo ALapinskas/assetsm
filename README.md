@@ -1,14 +1,14 @@
-# assetsm
-Assets manager. Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
+# assets-manager
+Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
 
 # How to use
 1. Install module
 ```
-npm i assetsm
+npm i assets-manager
 ```
 2. Import and create a class instance
 ```
-    import { AssetsManager } from "assetsm"
+    import { AssetsManager } from "assets-manager"
 
     const assets = new AssetsManager()
 ```
