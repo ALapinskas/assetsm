@@ -1,18 +1,18 @@
 {
-  "name": "assets-manager",
+  "name": "assetsm",
   "version": "0.0.2",
-  "description": "Tilemaps, tilesets, images and audio loading and managing.",
-  "main": "dist/assets-manager.min.js",
+  "description": "Assets Manager. Tilemaps, tilesets, images and audio loading and managing.",
+  "main": "dist/assetsm.min.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
     "start": "npx http-server -c-1 -o ./examples",
-    "minify": "npx minify ./src/AssetsManager.js > ./dist/assets-manager.min.js"
+    "minify": "npx minify ./src/AssetsManager.js > ./dist/assetsm.min.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ALapinskas/assets-manager.git"
+    "url": "git+https://github.com/ALapinskas/assetsm.git"
   },
   "keywords": [
     "tilemap",
@@ -20,6 +20,7 @@
     "tiled",
     "image",
     "audio",
+    "assets",
     "loader",
     "manager",
     ".tmj",
@@ -28,9 +29,9 @@
   "author": "Arturas-Alfredas Lapinskas",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ALapinskas/assets-manager/issues"
+    "url": "https://github.com/ALapinskas/assetsm/issues"
   },
-  "homepage": "https://github.com/ALapinskas/assets-manager#readme",
+  "homepage": "https://github.com/ALapinskas/assetsm#readme",
   "devDependencies": {
     "http-server": "14.1.1",
     "minify": "9.2.0"

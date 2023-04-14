@@ -1,5 +1,5 @@
-# assets-manager
-Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
+# assetsm
+Assets Manager. Tilemaps(.tmj/.json), Images(as ImageBitmaps) and Audio loading and managing.
 
 # How to use
 1. Install module
