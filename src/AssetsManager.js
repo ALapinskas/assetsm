@@ -3,7 +3,7 @@
  *  tilemaps, tilesets, images and audio,
  *  and easy access loaded files by key
  */
-export class AssetsManager {
+export default class AssetsManager {
     /**
      * @type {Map<String, HTMLAudioElement>}
      */
@@ -13,11 +13,6 @@ export class AssetsManager {
      * @type {Map<String, ImageBitmap>}
      */
     #images;
-
-    /**
-     * @type {Map<String, Array<ImageBitmap>>}
-     */
-    #tileSetImages;
 
     /**
      * @type {Map<String, Object>}
@@ -52,7 +47,6 @@ export class AssetsManager {
     constructor() {
         this.#audio = new Map();
         this.#images = new Map();
-        this.#tileSetImages = new Map();
         this.#tilemaps = new Map();
         this.#audioQueue = [];
         this.#imagesQueue = [];
@@ -98,14 +92,6 @@ export class AssetsManager {
         } else {
             Warning("Tilemap with key '" + key + "' is not registered");
         }
-    }
-
-    /**
-     * @param {String} key 
-     * @returns {Array<ImageBitmap>}
-     */
-    getTilesetImageArray(key) {
-        return this.#tileSetImages.get(key);
     }
 
     /**
@@ -285,53 +271,6 @@ export class AssetsManager {
         });
     }
 
-    /**
-     * Can be used instead of #loadImage, it splits the tilesetImage into small
-     * pieces, loads them and save into #tileSetImages, instead of #images Map.
-     * @param {string} key 
-     * @param {string} url 
-     * @param {Object} tileset
-     * @returns {Promise}
-     */
-    #loadTileSetImage(key, url, tilesetData) {
-        const { tilecount, columns, tilewidth, tileheight } = tilesetData;
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            
-            img.onload = () => {
-                const createImagePromises = [];
-                let currentRow = 0,
-                    currentColumn = 0;
-                for (let i = 0; i < tilecount; i ++) {
-                    if (i !== 0) {
-                        if (i % columns === 0) {
-                            currentRow += 1;
-                            currentColumn = 0;
-                        } else {
-                            currentColumn +=1;
-                        }
-                    }
-                    createImagePromises.push(createImageBitmap(img, currentColumn * tileheight, currentRow * tilewidth, tilewidth, tileheight));
-                }
-                Promise.allSettled(createImagePromises).then((results) => { 
-                    let imagesArray = [];
-                    results.forEach((result) => {
-                        if (result.status === "rejected") {
-                            Warning(result.reason || result.value);
-                        }
-                        imagesArray.push(result.value);
-                    });
-                    this.#addNewTileSetImage(key, imagesArray);
-                    resolve();
-                });
-            };
-            img.onerror = (err) => {
-                reject(err);
-            };
-            img.src = url;
-        });
-    }
-
     #checkInputParams(key, url) {
         if (!key || key.trim().length === 0) {
             Exception("key should be provided");
@@ -348,10 +287,6 @@ export class AssetsManager {
 
     #addNewImage(key, image) {
         this.#images.set(key, image);
-    }
-
-    #addNewTileSetImage(key, imageArray) {
-        this.#tileSetImages.set(key, imageArray);
     }
 
     #attachTilesetData(key, idx, tileset) {
