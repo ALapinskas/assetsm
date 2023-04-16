@@ -1,5 +1,5 @@
 # assetsm
-Assets Manager. \n
+Assets Manager.
 Tilemaps(.tmj/.json), images and audio files loading and managing.
 
 # How to use
