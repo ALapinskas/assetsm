@@ -1,5 +1,5 @@
 # assetsm
-Assets Manager.\ 
+Assets Manager. \ 
 Tilemaps(.tmj/.json), images and audio files loading and managing.
 
 # How to use
@@ -9,32 +9,32 @@ npm i assetsm
 ```
 2. Import and create a class instance
 ```
-    import AssetsManager from "assetsm"
+import AssetsManager from "assetsm"
 
-    const assets = new AssetsManager()
+const assets = new AssetsManager()
 ```
 3. Register files
 ```
-    assets.addAudio(key, url)
-    assets.addImage(key, url)
-    assets.addTileMap(key, url)
+assets.addAudio(key, url)
+assets.addImage(key, url)
+assets.addTileMap(key, url)
 ```
 4. Preload all files you registered in the previous step
 ```
-    assets.preload().then(() => {
+assets.preload().then(() => {
 ```
 5. Use files
 ```
-    {
-        const audio = assets.getAudio(key)
-        const image = assets.getImage(key)
-        const tilemap = assets.getTileMap(key)
-    }
+{
+    const audio = assets.getAudio(key)
+    const image = assets.getImage(key)
+    const tilemap = assets.getTileMap(key)
+}
 ```
 6. To check the process booleans you can use
 ```
-    assets.isLoading
-    assets.isAllFilesLoaded
+assets.isLoading
+assets.isAllFilesLoaded
 ```
 # Run examples from ./examples folder
 ```
