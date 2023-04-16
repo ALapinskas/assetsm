@@ -1,7 +1,7 @@
 /**
  *  This class is used to preload 
  *  tilemaps, tilesets, images and audio,
- *  and easy access loaded files by key
+ *  and easy access loaded files by keys
  */
 export default class AssetsManager {
     /**
@@ -106,7 +106,7 @@ export default class AssetsManager {
                     Warning(result.reason || result.value);
                 }
             });
-            //clear the loaded queue
+            //clear load queue
             this.#audioQueue = [];
             return Promise.allSettled(this.#tileMapsQueue).then((loadingResults) => {
                 loadingResults.forEach((result) => {
@@ -114,7 +114,7 @@ export default class AssetsManager {
                         Warning(result.reason || result.value);
                     }
                 }); 
-                //clear the loaded queue
+                //clear load queue
                 this.#tileMapsQueue = [];
                 return Promise.allSettled(this.#imagesQueue).then((loadingResults) => { 
                     loadingResults.forEach((result) => {
@@ -122,7 +122,7 @@ export default class AssetsManager {
                             Warning(result.reason || result.value);
                         }
                     });
-                    //clear the loaded queue
+                    //clear load queue
                     this.#imagesQueue = [];
                     this.#isAllFilesLoaded = true;
                     this.#isLoading = false;
@@ -183,9 +183,6 @@ export default class AssetsManager {
                         let split = url.split("/"),
                             length = split.length,
                             relativePath;
-                        if (!data.version === "1.9") {
-                            Warning("Not tested with version: " + data.version);
-                        }
                         if (split[length - 1].includes(".tmj") || split[length - 1].includes(".json")) {
                             split.pop();
                             relativePath = split.join("/") + "/";
@@ -194,7 +191,6 @@ export default class AssetsManager {
                             relativePath = split.join("/") + "/";
                         }
                         this.#addTileMap(key, data);
-                        console.log("tilemap was added");
                         if (data.tilesets && data.tilesets.length > 0) {
                             data.tilesets.forEach((tileset, idx) => {
                                 this.#loadTileSet(tileset, relativePath).then((tileset) => {

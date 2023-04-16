@@ -23,8 +23,8 @@
     "assets",
     "loader",
     "manager",
-    ".tmj",
-    ".tsj"
+    "tmj",
+    "tsj"
   ],
   "author": "Arturas-Alfredas Lapinskas",
   "license": "MIT",
