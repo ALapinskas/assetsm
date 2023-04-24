@@ -1,5 +1,5 @@
 import AssetsManager from "../dist/assetsm.min.js"
-
+//import AssetsManager from "../src/AssetsManager.js"
 // 1. Create a class instance
 const assets = new AssetsManager()
 

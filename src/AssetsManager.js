@@ -36,28 +36,34 @@ export default class AssetsManager {
     #tilemaps;
 
     /**
-     * @type {Array<Promise>}
+     * @type {Map<String, String>}
      */
     #audioQueue;
 
     /**
-     * @type {Array<Promise>}
+     * @type {Map<String, String>}
      */
     #imagesQueue;
 
     /**
-     * @type {Array<Promise>}
+     * @type {Map<String, String>}
      */
     #tileMapsQueue;
+
+    /**
+     * @type {Number}
+     */
+    #itemsLoaded;
 
     constructor() {
         this.#audio = new Map();
         this.#images = new Map();
         this.#tilemaps = new Map();
-        this.#audioQueue = [];
-        this.#imagesQueue = [];
-        this.#tileMapsQueue = [];
+        this.#audioQueue = new Map();
+        this.#imagesQueue = new Map();
+        this.#tileMapsQueue = new Map();
         this.#emitter = new EventTarget();
+        this.#itemsLoaded = 0;
     }
 
     /**
@@ -104,58 +110,31 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     preload() {
-        let total = this.#audioQueue.length + this.#tileMapsQueue.length + this.#imagesQueue.length;
+        let total = this.#totalItemsInQueue();
         this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.loadstart, { total }));
         
-        return Promise.allSettled(this.#audioQueue.map(promise => promise())).then((loadingResults) => {
+        return Promise.allSettled(Array.from(this.#audioQueue.entries()).map((key_value) => this.#loadAudio(key_value[0], key_value[1]))).then((loadingResults) => {
             loadingResults.forEach((result) => {
                 if (result.status === "rejected") {
                     Warning(result.reason || result.value);
                 }
             });
 
-            let loadedAudio = this.#audioQueue.length;
-            if (loadedAudio > 0) {
-                total = total - loadedAudio;
-                this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded: loadedAudio, total }));
-            }
-
-            //clear load queue
-            this.#audioQueue = [];
-
-            return Promise.allSettled(this.#tileMapsQueue.map(promise => promise())).then((loadingResults) => {
+            return Promise.allSettled(Array.from(this.#tileMapsQueue.entries()).map((key_value) => this.#loadTileMap(key_value[0], key_value[1]))).then((loadingResults) => {
                 loadingResults.forEach((result) => {
                     if (result.status === "rejected") {
                         Warning(result.reason || result.value);
                     }
-                }); 
-                
-                let loadedTileMaps = this.#tileMapsQueue.length;
-                if (loadedTileMaps > 0) {
-                    let loaded = loadedTileMaps + loadedAudio;
-                    total = this.#imagesQueue.length;
-                    this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded, total }));
-                }
+                });
 
-                //clear load queue
-                this.#tileMapsQueue = [];
-
-                return Promise.allSettled(this.#imagesQueue.map(promise => promise())).then((loadingResults) => { 
+                return Promise.allSettled(Array.from(this.#imagesQueue.entries()).map((key_value) => this.#loadImage(key_value[0], key_value[1]))).then((loadingResults) => { 
                     loadingResults.forEach((result) => {
                         if (result.status === "rejected") {
                             Warning(result.reason || result.value);
                         }
                     });
 
-                    let loadedImages = this.#imagesQueue.length;
-                    if (loadedImages > 0) {
-                        let loaded = loadedAudio + loadedTileMaps + loadedImages;
-                        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded, total: 0 }));
-                    }
-
                     this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.load));
-                    //clear load queue
-                    this.#imagesQueue = [];
 
                     return Promise.resolve();
                 });
@@ -170,8 +149,10 @@ export default class AssetsManager {
      */
     addAudio(key, url) {
         this.#checkInputParams(key, url);
-        const promise = this.#loadAudio(key, url);
-        this.#audioQueue.push(promise);
+        if (this.#audioQueue.has(key)) {
+            Warning("Audio with key ", key, " is already registered");
+        }
+        this.#audioQueue.set(key, url);
     }
 
     /**
@@ -181,8 +162,10 @@ export default class AssetsManager {
      */
     addImage(key, url) {
         this.#checkInputParams(key, url);
-        const promise = this.#loadImage(key, url);
-        this.#imagesQueue.push(promise);
+        if (this.#imagesQueue.has(key)) {
+            Warning("Image with key ", key, " is already registered");
+        }
+        this.#imagesQueue.set(key, url);
     }
 
     /**
@@ -192,37 +175,10 @@ export default class AssetsManager {
      */
     addTileMap(key, url) {
         this.#checkInputParams(key, url);
-        const promise = () => (
-            new Promise((resolve, reject) => {
-                fetch(url)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        let split = url.split("/"),
-                            length = split.length,
-                            relativePath;
-                        if (split[length - 1].includes(".tmj") || split[length - 1].includes(".json")) {
-                            split.pop();
-                            relativePath = split.join("/") + "/";
-                        } else if (split[length - 2].includes(".tmj") || split[length - 2].includes(".json")) {
-                            split.splice(length - 2, 2);
-                            relativePath = split.join("/") + "/";
-                        }
-                        this.#addTileMap(key, data);
-                        if (data.tilesets && data.tilesets.length > 0) {
-                            data.tilesets.forEach((tileset, idx) => {
-                                this.#loadTileSet(tileset, relativePath).then((tileset) => {
-                                    this.#attachTilesetData(key, idx, tileset);
-                                    resolve();
-                                });
-                            });
-                        }
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            })
-        );
-        this.#tileMapsQueue.push(promise);
+        if (this.#tileMapsQueue.has(key)) {
+            Warning("Tilemap with key ", key, " is already registered");
+        }
+        this.#tileMapsQueue.set(key, url);
     }
 
     addEventListener(type, fn, ...args) {
@@ -254,24 +210,68 @@ export default class AssetsManager {
     }
 
     /**
+     * Loads tilemap file and related data
+     * @param {string} key 
+     * @param {string} url 
+     * @returns {Promise}
+     */
+    #loadTileMap(key, url) {
+        return new Promise((resolve, reject) => {
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    let split = url.split("/"),
+                        length = split.length,
+                        relativePath;
+                    if (split[length - 1].includes(".tmj") || split[length - 1].includes(".json")) {
+                        split.pop();
+                        relativePath = split.join("/") + "/";
+                    } else if (split[length - 2].includes(".tmj") || split[length - 2].includes(".json")) {
+                        split.splice(length - 2, 2);
+                        relativePath = split.join("/") + "/";
+                    }
+                    this.#addTileMap(key, data);
+                    this.#removeTileMapFromQueue(key);
+                    
+                    if (data.tilesets && data.tilesets.length > 0) {
+                        data.tilesets.forEach((tileset, idx) => {
+                            this.#loadTileSet(tileset, relativePath).then((tileset) => {
+                                this.#attachTilesetData(key, idx, tileset);
+                                this.#dispatchCurrentLoadingProgress();
+                                resolve();
+                            });
+                        });
+                    }
+                })
+                .catch((err) => {
+                    this.#dispatchLoadingError(err);
+                    reject(err);
+                });
+        });
+    }
+
+    /**
      * Loads audio file
      * @param {string} key 
      * @param {string} url 
      * @returns {Promise}
      */
     #loadAudio(key, url) {
-        return () => (new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const audio = new Audio(url);
             
             audio.addEventListener("loadeddata", () => {
                 this.#addNewAudio(key, audio);
+                this.#removeAudioFromQueue(key);
+                this.#dispatchCurrentLoadingProgress();
                 resolve();
             });
 
             audio.addEventListener("error", (err) => {
+                this.#dispatchLoadingError(err);
                 reject(err);
             });
-        }));
+        });
     }
 
     /**
@@ -281,20 +281,23 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     #loadImage(key, url) {
-        return () => (new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const img = new Image();
             
             img.onload = () => {
                 createImageBitmap(img).then((imageBitmap) => {
                     this.#addNewImage(key, imageBitmap);
+                    this.#removeImageFromQueue(key);
+                    this.#dispatchCurrentLoadingProgress();
                     resolve();
                 });
             };
             img.onerror = (err) => {
+                this.#dispatchLoadingError(error);
                 reject(err);
             };
             img.src = url;
-        }));
+        });
     }
 
     #checkInputParams(key, url) {
@@ -311,8 +314,16 @@ export default class AssetsManager {
         this.#audio.set(key, audio);
     }
 
+    #removeAudioFromQueue(key) {
+        this.#audioQueue.delete(key);
+    }
+
     #addNewImage(key, image) {
         this.#images.set(key, image);
+    }
+
+    #removeImageFromQueue(key) {
+        this.#imagesQueue.delete(key);
     }
 
     #attachTilesetData(key, idx, tileset) {
@@ -322,6 +333,24 @@ export default class AssetsManager {
 
     #addTileMap(key, data) {
         this.#tilemaps.set(key, data);
+    }
+
+    #removeTileMapFromQueue(key) {
+        this.#tileMapsQueue.delete(key);
+    }
+
+    #totalItemsInQueue() {
+        return this.#audioQueue.size + this.#tileMapsQueue.size + this.#imagesQueue.size;
+    }
+
+    #dispatchCurrentLoadingProgress() {
+        const total = this.#totalItemsInQueue();
+        this.#itemsLoaded += 1;
+        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded: this.#itemsLoaded, total }));
+    }
+
+    #dispatchLoadingError(error) {
+        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.error, { error }));
     }
 }
 
