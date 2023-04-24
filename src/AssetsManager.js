@@ -66,6 +66,10 @@ export default class AssetsManager {
         this.#itemsLoaded = 0;
     }
 
+    get filesWaitingForUpload() {
+        return this.#audioQueue.size + this.#tileMapsQueue.size + this.#imagesQueue.size;
+    }
+
     /**
      * @param {String} key 
      * @returns {HTMLAudioElement | undefined} cloned audio element
@@ -110,9 +114,7 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     preload() {
-        let total = this.#totalItemsInQueue();
-        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.loadstart, { total }));
-        
+        this.#dispatchLoadingStart();
         return Promise.allSettled(Array.from(this.#audioQueue.entries()).map((key_value) => this.#loadAudio(key_value[0], key_value[1]))).then((loadingResults) => {
             loadingResults.forEach((result) => {
                 if (result.status === "rejected") {
@@ -134,8 +136,7 @@ export default class AssetsManager {
                         }
                     });
 
-                    this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.load));
-
+                    this.#dispatchLoadingFinish();
                     return Promise.resolve();
                 });
             });
@@ -339,12 +340,17 @@ export default class AssetsManager {
         this.#tileMapsQueue.delete(key);
     }
 
-    #totalItemsInQueue() {
-        return this.#audioQueue.size + this.#tileMapsQueue.size + this.#imagesQueue.size;
+    #dispatchLoadingStart() {
+        let total = this.filesWaitingForUpload;
+        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.loadstart, { total }));
+    }
+
+    #dispatchLoadingFinish() {
+        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.load));
     }
 
     #dispatchCurrentLoadingProgress() {
-        const total = this.#totalItemsInQueue();
+        const total = this.filesWaitingForUpload;
         this.#itemsLoaded += 1;
         this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded: this.#itemsLoaded, total }));
     }

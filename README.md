@@ -13,24 +13,28 @@ import AssetsManager from "assetsm"
 
 const assets = new AssetsManager()
 ```
-3. Subscribe for progress to track the loading progress status
+3. Register files
+```
+assets.addAudio(key, url)
+assets.addImage(key, url)
+assets.addTileMap(key, url)
+```
+4. Subscribe for progress to track the loading progress status
 ```
 assets.addEventListener("progress", (event) => {
     console.log("progress, loaded items: ", event.loaded);
     console.log("progress, items left: ", event.total);
 });
 ```
-4. Register files
+5. Get current pending uploads if necessary
 ```
-assets.addAudio(key, url)
-assets.addImage(key, url)
-assets.addTileMap(key, url)
+assets.filesWaitingForUpload
 ```
-5. Preload all files you registered in the previous step
+6. Preload all files you registered in the previous step
 ```
 assets.preload().then(() => {
 ```
-6. Use files
+7. Use files
 ```
 {
     const audio = assets.getAudio(key)

@@ -14,10 +14,13 @@ assets.addEventListener("progress", (event) => {
     console.log("progress, items left: ", event.total);
 });
 
-// 4. Preload all files you added in the previous step
+// 4. Get current pending uploads if necessary
+console.log("files, waiting for upload:", assets.filesWaitingForUpload)
+
+// 5. Preload all files you added in the previous step
 assets.preload().then(() => {
 
-    // 5. Use 
+    // 6. Use 
     const audio = assets.getAudio("default"),
         imageBitmap = assets.getImage("soldier"),
         tilemap = assets.getTileMap("tilemap"),
