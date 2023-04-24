@@ -13,17 +13,24 @@ import AssetsManager from "assetsm"
 
 const assets = new AssetsManager()
 ```
-3. Register files
+3. Subscribe for progress to track the loading progress status
+```
+assets.addEventListener("progress", (event) => {
+    console.log("progress, loaded items: ", event.loaded);
+    console.log("progress, items left: ", event.total);
+});
+```
+4. Register files
 ```
 assets.addAudio(key, url)
 assets.addImage(key, url)
 assets.addTileMap(key, url)
 ```
-4. Preload all files you registered in the previous step
+5. Preload all files you registered in the previous step
 ```
 assets.preload().then(() => {
 ```
-5. Use files
+6. Use files
 ```
 {
     const audio = assets.getAudio(key)
@@ -31,10 +38,14 @@ assets.preload().then(() => {
     const tilemap = assets.getTileMap(key)
 }
 ```
-6. To check the process booleans you can use
+7. To check the process you can subscribe for ProgressEvent.type event
 ```
-assets.isLoading
-assets.isAllFilesLoaded
+// fires when uploading is starting
+assets.addEventListener("loadstart", () =>
+// fires when uploading is in progress
+assets.addEventListener("progress", () =>
+// fires when uploading is over
+assets.addEventListener("load", () =>
 ```
 # Run examples from ./examples folder
 ```

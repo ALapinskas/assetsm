@@ -5,15 +5,21 @@ const assets = new AssetsManager()
 
 // 2. Add files to the queue
 assets.addAudio("default", "./knopka-schelchok-korotkii-chetkii-myagkii1.mp3")
-assets.addImage("solder", "./SpritesheetGuns.png")
+assets.addImage("soldier", "./SpritesheetGuns.png")
 assets.addTileMap("tilemap", "./map.tmj")
 
-// 3. Preload all files you added in the previous step
+// 3. Subscribe for progress to track the loading progress status
+assets.addEventListener("progress", (event) => {
+    console.log("progress, loaded items: ", event.loaded);
+    console.log("progress, items left: ", event.total);
+});
+
+// 4. Preload all files you added in the previous step
 assets.preload().then(() => {
 
-    // 4. Use 
+    // 5. Use 
     const audio = assets.getAudio("default"),
-        imageBitmap = assets.getImage("solder"),
+        imageBitmap = assets.getImage("soldier"),
         tilemap = assets.getTileMap("tilemap"),
         tilesets = tilemap.tilesets,
         tilesetImages = tilesets.map((tileset) => assets.getImage(tileset.data.name));

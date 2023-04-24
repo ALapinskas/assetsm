@@ -1,9 +1,25 @@
+
+const PROGRESS_EVENT_TYPE = {
+    loadstart: "loadstart", 
+    progress: "progress", 
+    abort: "abort", 
+    error: "error", 
+    load: "load", 
+    timeout: "timeout"
+}
+
 /**
  *  This class is used to preload 
  *  tilemaps, tilesets, images and audio,
  *  and easy access loaded files by keys
  */
 export default class AssetsManager {
+
+    /**
+     * @type {EventTarget}
+     */
+    #emitter;
+
     /**
      * @type {Map<String, HTMLAudioElement>}
      */
@@ -34,16 +50,6 @@ export default class AssetsManager {
      */
     #tileMapsQueue;
 
-    /**
-     * @type {boolean}
-     */
-    #isLoading;
-
-    /**
-     * @type {boolean}
-     */
-    #isAllFilesLoaded;
-
     constructor() {
         this.#audio = new Map();
         this.#images = new Map();
@@ -51,46 +57,45 @@ export default class AssetsManager {
         this.#audioQueue = [];
         this.#imagesQueue = [];
         this.#tileMapsQueue = [];
-        this.#isLoading = undefined;
-        this.#isAllFilesLoaded = false;
+        this.#emitter = new EventTarget();
     }
 
     /**
      * @param {String} key 
-     * @returns {HTMLAudioElement} cloned audio element
+     * @returns {HTMLAudioElement | undefined} cloned audio element
      */
     getAudio(key) {
         const val = this.#audio.get(key);
         if (val) {
             return val;
         } else {
-            Warning("Audio with key '" + key + "' is not registered");
+            Warning("Audio with key '" + key + "' is not loaded");
         }
     }
 
     /**
      * @param {String} key 
-     * @returns {ImageBitmap}
+     * @returns {ImageBitmap | undefined}
      */
     getImage(key) {
         const val = this.#images.get(key);
         if (val) {
             return val;
         } else {
-            Warning("Image with key '" + key + "' is not registered");
+            Warning("Image with key '" + key + "' is not loaded");
         }
     }
 
     /**
      * @param {String} key 
-     * @returns {Object}
+     * @returns {Object | undefined}
      */
     getTileMap(key) {
         const val = this.#tilemaps.get(key);
         if (val) {
             return val;
         } else {
-            Warning("Tilemap with key '" + key + "' is not registered");
+            Warning("Tilemap with key '" + key + "' is not loaded");
         }
     }
 
@@ -99,53 +104,65 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     preload() {
-        this.#isLoading = true;
-        return Promise.allSettled(this.#audioQueue).then((loadingResults) => {
+        let total = this.#audioQueue.length + this.#tileMapsQueue.length + this.#imagesQueue.length;
+        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.loadstart, { total }));
+        
+        return Promise.allSettled(this.#audioQueue.map(promise => promise())).then((loadingResults) => {
             loadingResults.forEach((result) => {
                 if (result.status === "rejected") {
                     Warning(result.reason || result.value);
                 }
             });
+
+            let loadedAudio = this.#audioQueue.length;
+            if (loadedAudio > 0) {
+                total = total - loadedAudio;
+                this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded: loadedAudio, total }));
+            }
+
             //clear load queue
             this.#audioQueue = [];
-            return Promise.allSettled(this.#tileMapsQueue).then((loadingResults) => {
+
+            return Promise.allSettled(this.#tileMapsQueue.map(promise => promise())).then((loadingResults) => {
                 loadingResults.forEach((result) => {
                     if (result.status === "rejected") {
                         Warning(result.reason || result.value);
                     }
                 }); 
+                
+                let loadedTileMaps = this.#tileMapsQueue.length;
+                if (loadedTileMaps > 0) {
+                    let loaded = loadedTileMaps + loadedAudio;
+                    total = this.#imagesQueue.length;
+                    this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded, total }));
+                }
+
                 //clear load queue
                 this.#tileMapsQueue = [];
-                return Promise.allSettled(this.#imagesQueue).then((loadingResults) => { 
+
+                return Promise.allSettled(this.#imagesQueue.map(promise => promise())).then((loadingResults) => { 
                     loadingResults.forEach((result) => {
                         if (result.status === "rejected") {
                             Warning(result.reason || result.value);
                         }
                     });
+
+                    let loadedImages = this.#imagesQueue.length;
+                    if (loadedImages > 0) {
+                        let loaded = loadedAudio + loadedTileMaps + loadedImages;
+                        this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.progress, { lengthComputable: true, loaded, total: 0 }));
+                    }
+
+                    this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.load));
                     //clear load queue
                     this.#imagesQueue = [];
-                    this.#isAllFilesLoaded = true;
-                    this.#isLoading = false;
+
                     return Promise.resolve();
                 });
             });
         });
     }
 
-    /**
-     * @returns {boolean}
-     */
-    get isLoading() {
-        return this.#isLoading;
-    }
-
-    /**
-     * Indicates, whenever all files from queues are loaded or not
-     * @returns {boolean}
-     */
-    get isAllFilesLoaded() {
-        return this.#isAllFilesLoaded;
-    }
     /**
      * Adds an audio file to a loading queue
      * @param {string} key 
@@ -175,7 +192,7 @@ export default class AssetsManager {
      */
     addTileMap(key, url) {
         this.#checkInputParams(key, url);
-        const promise = 
+        const promise = () => (
             new Promise((resolve, reject) => {
                 fetch(url)
                     .then((response) => response.json())
@@ -203,8 +220,21 @@ export default class AssetsManager {
                     .catch((err) => {
                         reject(err);
                     });
-            });
+            })
+        );
         this.#tileMapsQueue.push(promise);
+    }
+
+    addEventListener(type, fn, ...args) {
+        if (!PROGRESS_EVENT_TYPE[type]) {
+            Warning("Event type should be one of the ProgressEvent.type");
+        } else {
+            this.#emitter.addEventListener(type, fn, ...args);
+        }   
+    }
+
+    removeEventListener(type, fn, ...args) {
+        this.#emitter.removeEventListener(type, fn, ...args);
     }
 
     #loadTileSet(tileset, relativePath) {
@@ -230,7 +260,7 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     #loadAudio(key, url) {
-        return new Promise((resolve, reject) => {
+        return () => (new Promise((resolve, reject) => {
             const audio = new Audio(url);
             
             audio.addEventListener("loadeddata", () => {
@@ -241,7 +271,7 @@ export default class AssetsManager {
             audio.addEventListener("error", (err) => {
                 reject(err);
             });
-        });
+        }));
     }
 
     /**
@@ -251,7 +281,7 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     #loadImage(key, url) {
-        return new Promise((resolve, reject) => {
+        return () => (new Promise((resolve, reject) => {
             const img = new Image();
             
             img.onload = () => {
@@ -264,7 +294,7 @@ export default class AssetsManager {
                 reject(err);
             };
             img.src = url;
-        });
+        }));
     }
 
     #checkInputParams(key, url) {
