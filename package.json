@@ -1,8 +1,8 @@
 {
   "name": "assetsm",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "description": "Assets Manager. Tilemaps, tilesets, images and audio files loading and managing.",
-  "browser": "dist/assetsm.min.js",
+  "main": "dist/assetsm.min.js",
   "scripts": {
     "start": "npx http-server -c-1 -o ./examples",
     "minify": "npx terser ./src/AssetsManager.js --compress ecma=6 -m -o ./dist/assetsm.min.js",
