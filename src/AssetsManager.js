@@ -294,7 +294,7 @@ export default class AssetsManager {
                 });
             };
             img.onerror = (err) => {
-                this.#dispatchLoadingError(error);
+                this.#dispatchLoadingError(err);
                 reject(err);
             };
             img.src = url;
