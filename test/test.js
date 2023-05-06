@@ -4,47 +4,32 @@ import AssetsManager from '../src/AssetsManager.js';
 
 let browser, page;
 
-describe('Assets Manager module testing', function () {
-    before(async () => {
-        browser = await puppeteer.launch({headless: false});
-        page = await browser.newPage();
+global.EventTarget = class EventTarget {};
 
-        await page.goto('http://127.0.0.1:8080/examples');
+describe('Assets Manager module testing', function () {
+    before(() => {
     });
 
-    after(async () => {
-        console.log("close browser");
-        //await browser.close();
+    after(() => {
     });
 
     describe('adding, loading, retrieving', () => {
-        it('should create an instance of AssetsManager, module methods should be available', async (done) => {
-            
-                const three = await page.evaluate(async () => {
-                    try {
-                        const module = await import('../src/AssetsManager.js');
-                        const AssetsManager = module.default,
-                            loader = new AssetsManager();
-                        console.log("page evaluate");
-                        //const loader = new AssetsManager();
-                        console.log("--->>>> created class instance");
-                        console.log(loader.addAudiox);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                });
-                
-            
-            
-            /*
-            loader.addImage
-            loader.addTileMap
-            loader.filesWaitingForUpload
-            loader.preload
-            loader.getAudio
-            loader.getImage
-            loader.getTileMap
-            */
+        it('should create an instance of AssetsManager, module methods should be available', (done) => {
+            try {
+                const loader = new AssetsManager();
+                assert.equal(typeof loader.addAudio, "function");
+                assert.equal(typeof loader.addImage, "function");
+                assert.equal(typeof loader.addTileMap, "function");
+                assert.equal(typeof loader.filesWaitingForUpload, "number");
+                assert.equal(typeof loader.preload, "function");
+                assert.equal(typeof loader.getAudio, "function");
+                assert.equal(typeof loader.getImage, "function");
+                assert.equal(typeof loader.getTileMap, "function");
+                done();
+            } catch (err) {
+                console.error(err);
+                done(err);
+            }
         });
     });
 

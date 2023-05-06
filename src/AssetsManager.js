@@ -66,6 +66,9 @@ export default class AssetsManager {
         this.#itemsLoaded = 0;
     }
 
+    /**
+     * @returns {Number}
+     */
     get filesWaitingForUpload() {
         return this.#audioQueue.size + this.#tileMapsQueue.size + this.#imagesQueue.size;
     }
