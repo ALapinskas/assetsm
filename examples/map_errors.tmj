@@ -152,11 +152,7 @@
  "tileheight":16,
  "tilesets":[
         {
-         "firstgid":1,
-         "source":"Tileset.tsj"
-        },
-        {
-         "firstgid": 2,
+         "firstgid": 1,
          "source":"Tileset.tsj"
         }],
  "tilewidth":16,
