@@ -154,7 +154,7 @@ export default class AssetsManager {
     addAudio(key, url) {
         this.#checkInputParams(key, url);
         if (this.#audioQueue.has(key)) {
-            Warning("Audio with key ", key, " is already registered");
+            Warning("Audio with key " + key + " is already registered");
         }
         this.#audioQueue.set(key, url);
     }
@@ -167,7 +167,7 @@ export default class AssetsManager {
     addImage(key, url) {
         this.#checkInputParams(key, url);
         if (this.#imagesQueue.has(key)) {
-            Warning("Image with key ", key, " is already registered");
+            Warning("Image with key " + key + " is already registered");
         }
         this.#imagesQueue.set(key, url);
     }
@@ -180,7 +180,7 @@ export default class AssetsManager {
     addTileMap(key, url) {
         this.#checkInputParams(key, url);
         if (this.#tileMapsQueue.has(key)) {
-            Warning("Tilemap with key ", key, " is already registered");
+            Warning("Tilemap with key " + key + " is already registered");
         }
         this.#tileMapsQueue.set(key, url);
     }
@@ -199,6 +199,7 @@ export default class AssetsManager {
 
     #loadTileSet(tileset, relativePath) {
         const { firstgid:gid, source:url } = tileset;
+        this.#checkTilesetUrl(url);
         return fetch("./" + relativePath ? relativePath + url : url)
             .then((response) => response.json())
             .then((data) => {
@@ -208,8 +209,8 @@ export default class AssetsManager {
                 }
                 data.gid = gid;
                 return Promise.resolve(data);
-            }).catch((err) => {
-                this.#dispatchLoadingError(err);
+            }).catch(() => {
+                const err = new Error("Can't load related tileset ", url);
                 return Promise.reject(err);
             });
     }
@@ -221,38 +222,43 @@ export default class AssetsManager {
      * @returns {Promise}
      */
     #loadTileMap(key, url) {
-        return new Promise((resolve, reject) => {
-            fetch(url)
-                .then((response) => response.json())
-                .then((data) => {
-                    let split = url.split("/"),
-                        length = split.length,
-                        relativePath;
-                    if (split[length - 1].includes(".tmj") || split[length - 1].includes(".json")) {
-                        split.pop();
-                        relativePath = split.join("/") + "/";
-                    } else if (split[length - 2].includes(".tmj") || split[length - 2].includes(".json")) {
-                        split.splice(length - 2, 2);
-                        relativePath = split.join("/") + "/";
-                    }
-                    this.#addTileMap(key, data);
-                    this.#removeTileMapFromQueue(key);
-                    
-                    if (data.tilesets && data.tilesets.length > 0) {
-                        data.tilesets.forEach((tileset, idx) => {
-                            this.#loadTileSet(tileset, relativePath).then((tileset) => {
-                                this.#attachTilesetData(key, idx, tileset);
-                                this.#dispatchCurrentLoadingProgress();
-                                resolve();
-                            });
+        this.#checkTilemapUrl(url);
+        return fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                let split = url.split("/"),
+                    length = split.length,
+                    relativePath;
+                if (split[length - 1].includes(".tmj") || split[length - 1].includes(".json")) {
+                    split.pop();
+                    relativePath = split.join("/") + "/";
+                } else if (split[length - 2].includes(".tmj") || split[length - 2].includes(".json")) {
+                    split.splice(length - 2, 2);
+                    relativePath = split.join("/") + "/";
+                }
+                this.#addTileMap(key, data);
+                this.#removeTileMapFromQueue(key);
+                
+                if (data.tilesets && data.tilesets.length > 0) {
+                    const tilesetPromises = [];
+                    data.tilesets.forEach((tileset, idx) => {
+                        const loadTilesetPromise = this.#loadTileSet(tileset, relativePath).then((tileset) => {
+                            this.#attachTilesetData(key, idx, tileset);
+                            this.#dispatchCurrentLoadingProgress();
+                            return Promise.resolve();
                         });
-                    }
-                })
-                .catch((err) => {
-                    this.#dispatchLoadingError(err);
-                    reject(err);
-                });
-        });
+                        tilesetPromises.push(loadTilesetPromise);
+                    });
+                    return Promise.all(tilesetPromises);
+                }
+            })
+            .catch((err) => {
+                if (err.message.includes("JSON.parse:")) {
+                    err = new Error("Can't load tilemap " + url);
+                }
+                this.#dispatchLoadingError(err);
+                return Promise.reject(err);
+            });
     }
 
     /**
@@ -272,7 +278,8 @@ export default class AssetsManager {
                 resolve();
             });
 
-            audio.addEventListener("error", (err) => {
+            audio.addEventListener("error", () => {
+                const err = new Error("Can't load audio " + url);
                 this.#dispatchLoadingError(err);
                 reject(err);
             });
@@ -297,12 +304,29 @@ export default class AssetsManager {
                     resolve();
                 });
             };
-            img.onerror = (err) => {
+            img.onerror = () => {
+                const err = new Error("Can't load image " + url);
                 this.#dispatchLoadingError(err);
                 reject(err);
             };
             img.src = url;
         });
+    }
+
+    #checkTilesetUrl(url) {
+        if (url.includes(".tsj") || url.includes(".json")) {
+            return;
+        } else {
+            Exception("Related Tileset file type is not correct, only .tsj or .json files are supported");
+        }
+    }
+
+    #checkTilemapUrl(url) {
+        if (url.includes(".tmj") || url.includes(".json")) {
+            return;
+        } else {
+            Exception("Tilemap file type is not correct, only .tmj or .json files are supported");
+        }
     }
 
     #checkInputParams(key, url) {
