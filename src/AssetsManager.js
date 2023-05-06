@@ -327,11 +327,12 @@ export default class AssetsManager {
     }
 
     #checkInputParams(key, url) {
+        const errorMessage = "image key and url should be provided";
         if (!key || key.trim().length === 0) {
-            Exception("key should be provided");
+            Exception(errorMessage);
         }
         if (!url || url.trim().length === 0) {
-            Exception("image url should be provided");
+            Exception(errorMessage);
         }
         return;
     }
