@@ -19,7 +19,22 @@ describe('Assets Manager module testing', function () {
 
     describe('adding, loading, retrieving', () => {
         it('should create an instance of AssetsManager, module methods should be available', async (done) => {
- 
+            
+                const three = await page.evaluate(async () => {
+                    try {
+                        const module = await import('../src/AssetsManager.js');
+                        const AssetsManager = module.default,
+                            loader = new AssetsManager();
+                        console.log("page evaluate");
+                        //const loader = new AssetsManager();
+                        console.log("--->>>> created class instance");
+                        console.log(loader.addAudiox);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                });
+                
+            
             
             /*
             loader.addImage
