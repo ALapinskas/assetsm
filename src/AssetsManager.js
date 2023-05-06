@@ -206,6 +206,7 @@ export default class AssetsManager {
                 data.gid = gid;
                 return Promise.resolve(data);
             }).catch((err) => {
+                this.#dispatchLoadingError(err);
                 return Promise.reject(err);
             });
     }
@@ -356,6 +357,9 @@ export default class AssetsManager {
     }
 
     #dispatchLoadingError(error) {
+        if (error.message && error.message.includes("JSON.parse:")) {
+            // error json parse, wrong file type, or wrong path
+        }
         this.#emitter.dispatchEvent(new ProgressEvent(PROGRESS_EVENT_TYPE.error, { error }));
     }
 }

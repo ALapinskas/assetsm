@@ -27,7 +27,7 @@ assets.preload().then(() => {
         tilesets = tilemap.tilesets,
         tilesetImages = tilesets.map((tileset) => assets.getImage(tileset.data.name));
 
-    audio.play()
+    //audio.play()
 
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")

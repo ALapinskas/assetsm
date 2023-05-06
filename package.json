@@ -36,6 +36,8 @@
   "homepage": "https://github.com/ALapinskas/assetsm#readme",
   "devDependencies": {
     "http-server": "14.1.1",
-    "terser": "5.16.9"
+    "terser": "5.16.9",
+    "puppeteer": "20.1.1",
+    "mocha": "10.2.0"
   }
 }
