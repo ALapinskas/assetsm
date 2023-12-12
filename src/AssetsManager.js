@@ -298,12 +298,13 @@ export default class AssetsManager {
      * Loads image file
      * @param {string} key 
      * @param {string} url 
+     * @param {string} [cors="anonymous"] // https://hacks.mozilla.org/2011/11/using-cors-to-load-webgl-textures-from-cross-domain-images
      * @returns {Promise}
      */
-    _loadImage = (key, url) => {
+    _loadImage = (key, url, cors = "anonymous") => {
         return new Promise((resolve, reject) => {
             const img = new Image();
-            
+            img.crossOrigin = cors
             img.onload = () => {
                 createImageBitmap(img).then((imageBitmap) => {
                     this.#dispatchCurrentLoadingProgress();
