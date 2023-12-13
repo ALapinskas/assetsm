@@ -4,9 +4,13 @@ import AssetsManager from "../src/AssetsManager.js"
 const manager = new AssetsManager();
 
 // 2. Add files to the queue
-manager.addAudio("default", "./knopka-schelchok-korotkii-chetkii-myagkii1.mp3")
-manager.addImage("soldier", "./SpritesheetGuns.png")
-manager.addTileMap("tilemap", "./map.tmj")
+manager.addAudio("default", "./knopka-schelchok-korotkii-chetkii-myagkii1.mp3");
+manager.addImage("soldier", "./SpritesheetGuns.png");
+manager.addTileMap("tilemap", "./map.tmj"); 
+
+// lets say we want to load related tileset separately
+// manager.addTileMap("tilemap", "./map.tmj", true); 
+// manager.addTileSet("tileset", "./Tileset.tsj");
 
 // 3. Subscribe for progress to track the loading progress status
 manager.addEventListener("progress", (event) => {
@@ -24,9 +28,10 @@ manager.preload().then(() => {
     const audio = manager.getAudio("default"),
         imageBitmap = manager.getImage("soldier"),
         tilemap = manager.getTileMap("tilemap"),
+        tilesetSep = manager.getTileSet("tileset"),
         tilesets = tilemap.tilesets,
-        tilesetImages = tilesets.map((tileset) => manager.getImage(tileset.data.name));
-
+        tilesetImages = tilesets.map((tileset) => tilesetSep ? manager.getImage(tilesetSep.name): manager.getImage(tileset.data.name));
+    
     audio.play()
 
     const canvas = document.createElement("canvas")

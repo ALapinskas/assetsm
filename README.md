@@ -69,6 +69,15 @@ npm start
 3. Executing preload(), will upload all items where added in step2 with loaderMethod provided in step1 and save them temporary.
 4. After that uploadingResults will be available with get[loaderName](fileKey), or getFile(loaderName, fileKey, url)
 
+# Version 0.1.4
+# load tilesets separately
+If you want to load tilesets separately, pass false as 3d parameter to addTileMap and then use addTileSet to add tileset to queue:
+```
+assets.addTileMap(key, url, false);
+assets.addTileSet(key, url)
+```
+then you can use getTileSet(key) to retrieve the data
+
 # Notes
 * loaderMethod should return Promise with uploading result value
 * loaderMethod is optional, by default it will return fetch result
