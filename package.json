@@ -1,6 +1,6 @@
 {
   "name": "assetsm",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Assets Manager. Tilemaps, tilesets, images and audio files loading and managing.",
   "main": "dist/assetsm.min.js",
   "scripts": {
@@ -28,7 +28,8 @@
     "loader",
     "manager",
     "tmj",
-    "tsj"
+    "tsj",
+    "xmlAtlas"
   ],
   "author": "Arturas-Alfredas Lapinskas",
   "license": "MIT",

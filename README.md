@@ -74,10 +74,25 @@ npm start
 If you want to load tilesets separately, pass false as 3d parameter to addTileMap and then use addTileSet to add tileset to queue:
 ```
 assets.addTileMap(key, url, false);
-assets.addTileSet(key, url)
+assets.addTileSet(key, url);
+assets.preload().then(() => {
+    assets.getTileMap(key);
+    assets.getTileSet(key); 
+    ...
 ```
-then you can use getTileSet(key) to retrieve the data
 
+# Version 0.1.5
+# added xml atlas loader
+Two new loaders added: AtlasXML, AtlasImageMap.
+After uploading atlas xml, atlasImageMap will be loaded, and individual images could be accessed with getImage():
+```
+assets.addAtlasXML(key, url);
+assets.preload().then(() => {
+    const atlasImageMap = assets.getAtlasImageMap(key),
+        someImageFromAtlas = assets.getImage(imageKey),
+        ;
+    ...
+```
 # Notes
 * loaderMethod should return Promise with uploading result value
 * loaderMethod is optional, by default it will return fetch result
