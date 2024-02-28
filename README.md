@@ -81,7 +81,7 @@ assets.preload().then(() => {
     ...
 ```
 
-# Version 0.1.5
+# Version 0.1.6
 # added xml atlas loader
 Two new loaders added: AtlasXML, AtlasImageMap.
 After uploading atlas xml, atlasImageMap will be loaded, and individual images could be accessed with getImage():

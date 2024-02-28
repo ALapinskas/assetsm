@@ -1,6 +1,6 @@
 {
   "name": "assetsm",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Assets Manager. Tilemaps, tilesets, images and audio files loading and managing.",
   "main": "dist/assetsm.min.js",
   "scripts": {

@@ -6,6 +6,7 @@ const manager = new AssetsManager();
 // 2. Add files to the queue
 manager.addAudio("default", "./knopka-schelchok-korotkii-chetkii-myagkii1.mp3");
 manager.addImage("soldier", "./SpritesheetGuns.png");
+manager.addImage("racing", "./spritesheet_tiles_s.png");
 manager.addTileMap("tilemap", "./map.tmj"); 
 manager.addAtlasXML("atlas", "./img/allSprites_default.xml");
 
@@ -30,6 +31,7 @@ manager.preload().then(() => {
         imageBitmap = manager.getImage("soldier"),
         tilemap = manager.getTileMap("tilemap"),
         tilesetSep = manager.getTileSet("tileset"),
+        racingImage = manager.getImage("racing"),
         tilesets = tilemap.tilesets,
         tilesetImages = tilesets.map((tileset) => tilesetSep ? manager.getImage(tilesetSep.name): manager.getImage(tileset.data.name)),
         atlasImageMap = manager.getAtlasImageMap("atlas"),
@@ -38,8 +40,10 @@ manager.preload().then(() => {
 
     audio.play();
 
-    const canvas = document.createElement("canvas")
-    const ctx = canvas.getContext("2d")
+    
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     //draw image
     ctx.drawImage(imageBitmap,0,0, imageBitmap.width, imageBitmap.height);
     //draw tilesets:
@@ -47,6 +51,8 @@ manager.preload().then(() => {
         const m = idx + 1;
         ctx.drawImage(image,m*100,m* 100, image.width, image.height);
     });
+
+    ctx.drawImage(racingImage, 0, 100);
     //console.log(barrelBlack_sideImage);
     //ctx.putImageData(tankBody_green, 0, 0);
     ctx.drawImage(tileSand_roadCornerUL, 150, 0, tankBody_green.width, tankBody_green.height);
