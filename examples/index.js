@@ -9,6 +9,7 @@ manager.addImage("soldier", "./SpritesheetGuns.png");
 manager.addImage("racing", "./spritesheet_tiles_s.png");
 manager.addTileMap("tilemap", "./map.tmj"); 
 manager.addAtlasXML("atlas", "./img/allSprites_default.xml");
+manager.addImage("no_image_url", "./no_such_file.png");
 
 // lets say we want to load related tileset separately
 // manager.addTileMap("tilemap", "./map.tmj", true); 
@@ -40,8 +41,9 @@ manager.preload().then(() => {
 
     audio.play();
 
-    
     const canvas = document.createElement("canvas");
+    canvas.width = 600;
+    canvas.height = 500;
     const ctx = canvas.getContext("2d");
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //draw image
@@ -52,7 +54,7 @@ manager.preload().then(() => {
         ctx.drawImage(image,m*100,m* 100, image.width, image.height);
     });
 
-    ctx.drawImage(racingImage, 0, 100);
+    ctx.drawImage(racingImage, 300, 0);
     //console.log(barrelBlack_sideImage);
     //ctx.putImageData(tankBody_green, 0, 0);
     ctx.drawImage(tileSand_roadCornerUL, 150, 0, tankBody_green.width, tankBody_green.height);
