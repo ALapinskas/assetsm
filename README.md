@@ -2,6 +2,8 @@
 Assets Manager.
 Tilemaps(.tmj/.json), images and audio files loading and managing.
 
+![scheme](./schemes/scheme.png?raw=true "Flow scheme")
+
 # How to use
 1. Install module
 ```
@@ -96,14 +98,19 @@ assets.preload().then(() => {
     ...
 ```
 # Version 0.1.7
-# split upload errors
-* Critical errors. The behavior: stop upload and reject the promise.
+# split upload issues
+* Critical issues. The behavior: stop upload and reject the promise.
     - addFileType() method, file key or url is incorrect
     - incorrect file extension
     - incorrect uploadMethod return type
     - upload recursion error
-* Non critical errors. The behavior: continue upload process, failed object will be assigned to the null value, warning will be shown in the console.
-    - all other errors, such as 404
+* Non critical issues. The behavior: continue upload process, failed object will be assigned to the null value, warning will be shown in the console.
+    - all other issues, such as 404
+
+# Version 0.1.8
+* Non critical issues.
+    - #1: Empty preload() never resolves
+
 # Notes
 * loaderMethod should return Promise with uploading result value
 * loaderMethod is optional, by default it will return fetch result

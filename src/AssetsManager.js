@@ -234,8 +234,8 @@ export default class AssetsManager {
                             this.#dispatchLoadingError(error);
                         }
                     }
-                    resolve(results);
                 }
+                resolve(results);
             });
         });
     }

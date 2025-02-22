@@ -102,3 +102,22 @@ setTimeout(() => {
         }
     });
 }, 1000);
+
+// No data preload() should be resolved
+setTimeout(() => {
+    const manager3 = new AssetsManager();
+    console.log("no data preload started");
+    new Promise((res, rej) => {
+        setTimeout(() => {
+            rej("empty preload doesn't resolves!");
+        }, 1000);
+        manager3.preload().then(() => {
+            console.log("no data preload resolved");
+            res();
+        }).catch((err) => {
+            console.log("unexpected issue!");
+            console.error(err.message);
+            rej("unexpected issue!");
+        });
+    });
+}, 1500);
