@@ -7,9 +7,10 @@ const manager = new AssetsManager();
 manager.addAudio("default", "./knopka-schelchok-korotkii-chetkii-myagkii1.mp3");
 manager.addImage("soldier", "./SpritesheetGuns.png");
 manager.addImage("racing", "./spritesheet_tiles_s.png");
-manager.addTileMap("tilemap", "./map.tmj"); 
+manager.addTileMap("tilemapTmj", "./map.tmj"); 
 manager.addAtlasXML("atlas", "./img/allSprites_default.xml");
 manager.addImage("no_image_url", "./no_such_file.png");
+manager.addTileMap("tilemapTmx", "./map.tmx");
 
 // lets say we want to load related tileset separately
 // manager.addTileMap("tilemap", "./map.tmj", true); 
@@ -30,11 +31,11 @@ manager.preload().then(() => {
     // 6. Use 
     const audio = manager.getAudio("default"),
         imageBitmap = manager.getImage("soldier"),
-        tilemap = manager.getTileMap("tilemap"),
+        tilemapTmj = manager.getTileMap("tilemapTmj"),
         tilesetSep = manager.getTileSet("tileset"),
         racingImage = manager.getImage("racing"),
-        tilesets = tilemap.tilesets,
-        tilesetImages = tilesets.map((tileset) => tilesetSep ? manager.getImage(tilesetSep.name): manager.getImage(tileset.data.name)),
+        tilesets = tilemapTmj.tilesets,
+        tilesetImages = tilesets.map((tileset) => tilesetSep ? manager.getImage(tilesetSep.name): manager.getImage(tileset.name)),
         atlasImageMap = manager.getAtlasImageMap("atlas"),
         tankBody_green = manager.getImage("tankBody_green"),
         tileSand_roadCornerUL = manager.getImage("tileSand_roadCornerUL"); // atlasImageMap.tankBody_green
@@ -43,7 +44,7 @@ manager.preload().then(() => {
 
     const canvas = document.createElement("canvas");
     canvas.width = 600;
-    canvas.height = 500;
+    canvas.height = 300;
     const ctx = canvas.getContext("2d");
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //draw image
@@ -62,7 +63,26 @@ manager.preload().then(() => {
     //const test = ctx.getImageData(0, 0, 200, 200);
     //console.log(test);
     //ctx.putImageData(test, 200, 0);
-    document.body.appendChild(canvas) 
+    document.body.appendChild(canvas);
+
+    const tilemapTMX = manager.getTileMap("tilemapTmx"),
+        tilesetsTMX = tilemapTMX.tilesets,
+        tilesetImagesTMX = tilesetsTMX.map((tileset) => manager.getImage(tileset.name));
+
+    const canvasTMX = document.createElement("canvas");
+    canvasTMX.width = 600;
+    canvasTMX.height = 300;
+    const ctx2 = canvasTMX.getContext("2d");
+    ctx2.fillRect(0, 0, canvasTMX.width, canvasTMX.height);
+    //draw tilesets:
+    tilesetImagesTMX.forEach((image, idx) => {
+        const m = idx + 1;
+        ctx2.drawImage(image,m*100,m* 100, image.width, image.height);
+    });
+
+    console.log(tilemapTMX);
+    console.log(tilemapTmj);
+    document.body.appendChild(canvasTMX);
 });
 
 /*** new functionality(from 0.1.0): adding custom file types */

@@ -1,6 +1,6 @@
 # assetsm
 Assets Manager.
-Tilemaps(.tmj/.json), images and audio files loading and managing.
+Tilemaps(.tmj, .json, .tmx, .xml),  images and audio files loading and managing.
 
 ![scheme](./schemes/scheme.png?raw=true "Flow scheme")
 
@@ -63,7 +63,7 @@ npm start
 # Other Notes
 
 * Images are loaded as ImageBitmaps
-* When loading tilemaps, it also process tileset files and loads images inside them, attached images could be retrieved by tileset.name key, check examples/index.js how to do that
+* When loading tilemaps, the process also handles tileset files and loads the images contained within them.
 * ES6 only
 
 # Version 0.1.0 functionality:
@@ -109,7 +109,14 @@ assets.preload().then(() => {
 
 # Version 0.1.8
 * Non critical issues.
-    - #1: Empty preload() never resolves
+    - #1: Empty AssetsManager preload() never resolves
+
+# Version 0.2.0
+# new functionality added:
+- .tmx/.xml tilemap and .tsx/.xml tileset support
+- inline tileset support
+# refactor:
+- removed gid
 
 # Notes
 * loaderMethod should return Promise with uploading result value
