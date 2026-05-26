@@ -1,6 +1,6 @@
 {
   "name": "assetsm",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Assets Manager. Tilemaps, tilesets, images and audio files loading and managing.",
   "main": "dist/assetsm.min.js",
   "scripts": {
@@ -10,6 +10,11 @@
   "publishConfig":{
     "registry": "https://registry.npmjs.org"
   },
+  "files": [
+      "dist",
+      "src",
+      "README.md"
+  ],
   "type": "module",
   "engines": {
     "node": ">= v13"
